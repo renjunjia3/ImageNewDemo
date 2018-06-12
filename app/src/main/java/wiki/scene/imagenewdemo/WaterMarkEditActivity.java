@@ -40,6 +40,7 @@ public class WaterMarkEditActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         info = (BubbleLocalTemplateInfo) getIntent().getSerializableExtra("data");
         tvContent.setMaxWidth(900);
+        tvNewContent.setText(info.getContent());
         reDrawTextView();
     }
 
