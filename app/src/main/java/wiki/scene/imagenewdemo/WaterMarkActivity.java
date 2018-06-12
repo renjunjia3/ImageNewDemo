@@ -1,26 +1,39 @@
 package wiki.scene.imagenewdemo;
 
 import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Layout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.Arrays;
 
 import wiki.scene.imagenewdemo.sticker.BitmapStickerIcon;
+import wiki.scene.imagenewdemo.sticker.BubbleSticker;
 import wiki.scene.imagenewdemo.sticker.DeleteIconEvent;
 import wiki.scene.imagenewdemo.sticker.DrawableSticker;
 import wiki.scene.imagenewdemo.sticker.Sticker;
@@ -35,14 +48,26 @@ public class WaterMarkActivity extends AppCompatActivity {
     public static final int PERM_RQST_CODE = 110;
 
     private StickerView stickerView;
+    private RelativeLayout container;
+    private ImageView bg_waterMark;
 
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_water_mark);
 
-        stickerView = (StickerView) findViewById(R.id.sticker_view);
+        stickerView = findViewById(R.id.sticker_view);
+        container = findViewById(R.id.container);
+        bg_waterMark = findViewById(R.id.bg_waterMark);
+
+        File file = new File(Environment.getExternalStorageDirectory() + File.separator + "WSManager" + File.separator + "wsManager_1528782022697.png");
+
+        Glide.with(this)
+                .load(file)
+                .into(bg_waterMark);
+
         initstickerViewBaseAttr();
         addStickerListener();
 
@@ -54,6 +79,9 @@ public class WaterMarkActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERM_RQST_CODE);
         }
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("正在保存图片");
     }
 
 
@@ -222,7 +250,6 @@ public class WaterMarkActivity extends AppCompatActivity {
         sticker.setTextAlign(Layout.Alignment.ALIGN_CENTER);
         sticker.resizeText();
 
-
         stickerView.addSticker(sticker);
     }
 
@@ -275,6 +302,7 @@ public class WaterMarkActivity extends AppCompatActivity {
 
     //保存
     public void onClickSaveImageBitmap(View view) {
+        progressDialog.show();
         File file = FileUtil.getNewFile(WaterMarkActivity.this, "Sticker");
         if (file != null) {
             stickerView.save(file);
@@ -283,6 +311,52 @@ public class WaterMarkActivity extends AppCompatActivity {
         } else {
             Toast.makeText(WaterMarkActivity.this, "the file is null", Toast.LENGTH_SHORT).show();
         }
+        progressDialog.cancel();
     }
 
+    private Bitmap fullBitmap;
+
+    //添加气泡
+    public void onClickAddQp(View view) {
+        TextView textView = new TextView(this);
+        textView.setBackgroundResource(R.drawable.bg_message);
+        textView.setText("你好");
+        textView.setTextColor(Color.WHITE);
+        textView.setGravity(Gravity.CENTER_VERTICAL);
+        textView.setTextSize(sp2px(this, 16));
+        textView.setMaxWidth(900);
+        container.addView(textView);
+        container.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                container.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        container.setDrawingCacheEnabled(true);
+                        Bitmap bitmap = convertViewToBitmap(container);
+                        fullBitmap = Bitmap.createBitmap(bitmap);
+                        container.setDrawingCacheEnabled(false);
+                        BubbleSticker drawableSticker = new BubbleSticker(new BitmapDrawable(getResources(), fullBitmap));
+                        stickerView.addSticker(drawableSticker);
+                        fullBitmap = null;
+                        container.removeAllViews();
+                    }
+                }, 300);
+            }
+        });
+
+    }
+
+    public Bitmap convertViewToBitmap(View view) {
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        view.buildDrawingCache();
+        return view.getDrawingCache();
+    }
+
+    private int sp2px(Context context, float spValue) {
+        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
 }

@@ -14,12 +14,31 @@
         android:layout_weight="1"
         app:showBorder="true"
         app:showIcons="true">
-        <!--这是背景图-->
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="#000FFF" />
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!--这是背景图-->
+                <ImageView
+                    android:id="@+id/bg_waterMark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:background="#000FFF"
+                    android:scaleType="fitXY" />
+            </LinearLayout>
+        </ScrollView>
+
+        <RelativeLayout
+            android:id="@+id/container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
     </wiki.scene.imagenewdemo.sticker.StickerView>
 
     <LinearLayout
@@ -49,10 +68,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
+            android:onClick="onClickAddQp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="添加气泡" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
             android:onClick="onClickSaveImageBitmap"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:text="保存图片到本地" />
+            android:text="保存" />
     </LinearLayout>
 
     <HorizontalScrollView

@@ -244,7 +244,7 @@ public class StickerView extends FrameLayout {
                             icon.draw(canvas, borderPaint);
                             break;
                         case BitmapStickerIcon.RIGHT_TOP:
-                            if (getCurrentSticker() instanceof TextSticker) {
+                            if (getCurrentSticker() instanceof TextSticker || getCurrentSticker() instanceof BubbleSticker) {
                                 configIconMatrix(icon, x2, y2, rotation);
                                 icon.draw(canvas, borderPaint);
                             }
@@ -255,8 +255,10 @@ public class StickerView extends FrameLayout {
                             break;
 
                         case BitmapStickerIcon.RIGHT_BOTOM:
-                            configIconMatrix(icon, x4, y4, rotation);
-                            icon.draw(canvas, borderPaint);
+                            if (!(getCurrentSticker() instanceof BubbleSticker)) {
+                                configIconMatrix(icon, x4, y4, rotation);
+                                icon.draw(canvas, borderPaint);
+                            }
                             break;
                     }
 
@@ -305,8 +307,10 @@ public class StickerView extends FrameLayout {
                 }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
-                oldDistance = calculateDistance(event);
-                oldRotation = calculateRotation(event);
+                if (!(getCurrentSticker() instanceof BubbleSticker)) {
+                    oldDistance = calculateDistance(event);
+                    oldRotation = calculateRotation(event);
+                }
 
                 midPoint = calculateMidPoint(event);
 
@@ -425,14 +429,15 @@ public class StickerView extends FrameLayout {
                 break;
             case ActionMode.ZOOM_WITH_TWO_FINGER:
                 if (handlingSticker != null) {
-                    float newDistance = calculateDistance(event);
-                    float newRotation = calculateRotation(event);
-
-                    moveMatrix.set(downMatrix);
-                    moveMatrix.postScale(newDistance / oldDistance, newDistance / oldDistance, midPoint.x,
-                            midPoint.y);
-                    moveMatrix.postRotate(newRotation - oldRotation, midPoint.x, midPoint.y);
-                    handlingSticker.setMatrix(moveMatrix);
+                    if(!(getCurrentSticker() instanceof BubbleSticker)){
+                        float newDistance = calculateDistance(event);
+                        float newRotation = calculateRotation(event);
+                        moveMatrix.set(downMatrix);
+                        moveMatrix.postScale(newDistance / oldDistance, newDistance / oldDistance, midPoint.x,
+                                midPoint.y);
+                        moveMatrix.postRotate(newRotation - oldRotation, midPoint.x, midPoint.y);
+                        handlingSticker.setMatrix(moveMatrix);
+                    }
                 }
 
                 break;
