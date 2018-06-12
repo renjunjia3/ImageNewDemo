@@ -10,12 +10,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import wiki.scene.imagenewdemo.entity.BubbleLocalTemplateInfo;
+import wiki.scene.imagenewdemo.event.UpdateBubbleEvent;
 import wiki.scene.imagenewdemo.util.NinePatchUtil;
 
 public class WaterMarkEditActivity extends AppCompatActivity {
@@ -42,7 +45,8 @@ public class WaterMarkEditActivity extends AppCompatActivity {
 
     @OnClick({R.id.confirm_content, R.id.add_text_size, R.id.less_text_size,
             R.id.change_text_color_red, R.id.change_text_color_yellow, R.id.change_text_color_green,
-            R.id.change_text_font_default, R.id.change_text_font_1, R.id.change_text_font_2})
+            R.id.change_text_font_default, R.id.change_text_font_1, R.id.change_text_font_2,
+            R.id.confirm_update_bubble})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.confirm_content:
@@ -72,6 +76,10 @@ public class WaterMarkEditActivity extends AppCompatActivity {
             case R.id.change_text_font_2:
                 info.setText_font(Environment.getExternalStorageDirectory() + File.separator + "WSManager" + File.separator + "Font" + File.separator + "DFKaiSho-SU");
                 break;
+            case R.id.confirm_update_bubble:
+                EventBus.getDefault().post(new UpdateBubbleEvent(info));
+                finish();
+                return;
         }
         reDrawTextView();
     }
@@ -94,7 +102,6 @@ public class WaterMarkEditActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(info.getShader_color())) {
             tvContent.setShadowLayer(20, 0, 0, Color.parseColor(info.getShader_color()));
         }
-
     }
 
 }

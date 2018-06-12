@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Layout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -31,10 +33,15 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.util.Arrays;
 
 import wiki.scene.imagenewdemo.entity.BubbleLocalTemplateInfo;
+import wiki.scene.imagenewdemo.event.UpdateBubbleEvent;
 import wiki.scene.imagenewdemo.sticker.BitmapStickerIcon;
 import wiki.scene.imagenewdemo.sticker.BubbleSticker;
 import wiki.scene.imagenewdemo.sticker.DeleteIconEvent;
@@ -60,10 +67,16 @@ public class WaterMarkActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_water_mark);
-
+        EventBus.getDefault().register(this);
         stickerView = findViewById(R.id.sticker_view);
         container = findViewById(R.id.container);
         base_container = findViewById(R.id.base_container);
@@ -363,21 +376,7 @@ public class WaterMarkActivity extends AppCompatActivity {
         templateInfo.setText_color("#FFFFFF");
         templateInfo.setText_size(16);
 
-        TextView textView = new TextView(this);
-
-        if (templateInfo.getBuddle_template_path() != null && NinePatchUtil.getLocalNinePatch(WaterMarkActivity.this, templateInfo.getBuddle_template_path()) != null) {
-            textView.setBackground(NinePatchUtil.getLocalNinePatch(WaterMarkActivity.this, templateInfo.getBuddle_template_path()));
-        }
-
-        textView.setText(templateInfo.getContent());
-        textView.setTextColor(Color.parseColor(templateInfo.getText_color()));
-        if (templateInfo.getShader_color() != null && !templateInfo.getShader_color().isEmpty()) {
-            textView.setShadowLayer(20, 0, 0, Color.parseColor(templateInfo.getShader_color()));
-        }
-        textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setTextSize(templateInfo.getText_size());
-        textView.setMaxWidth(900);
-        container.addView(textView);
+        container.addView(createBubbleTextView(templateInfo));
         container.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -405,6 +404,62 @@ public class WaterMarkActivity extends AppCompatActivity {
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         view.buildDrawingCache();
         return view.getDrawingCache();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateBubbleSuccess(UpdateBubbleEvent event) {
+        if (event != null) {
+            final BubbleLocalTemplateInfo templateInfo = event.getInfo();
+            container.addView(createBubbleTextView(templateInfo));
+            container.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    container.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            container.setDrawingCacheEnabled(true);
+                            Bitmap bitmap = convertViewToBitmap(container);
+                            fullBitmap = Bitmap.createBitmap(bitmap);
+                            container.setDrawingCacheEnabled(false);
+                            BubbleSticker drawableSticker = new BubbleSticker(new BitmapDrawable(getResources(), fullBitmap), templateInfo);
+                            stickerView.replace(drawableSticker);
+                            fullBitmap = null;
+                            container.removeAllViews();
+                        }
+                    }, 300);
+                }
+            });
+
+        }
+    }
+
+    private TextView textView;
+
+    private TextView createBubbleTextView(BubbleLocalTemplateInfo templateInfo) {
+        if (textView == null) {
+            textView = new TextView(this);
+        }
+        if (!TextUtils.isEmpty(templateInfo.getBuddle_template_path())) {
+            if (NinePatchUtil.getLocalNinePatch(WaterMarkActivity.this, templateInfo.getBuddle_template_path()) != null) {
+                textView.setBackground(NinePatchUtil.getLocalNinePatch(WaterMarkActivity.this, templateInfo.getBuddle_template_path()));
+            }
+        }
+        if (!TextUtils.isEmpty(templateInfo.getText_font())) {
+            Typeface typeface = Typeface.createFromFile(templateInfo.getText_font());
+            textView.setTypeface(typeface);
+        } else {
+            textView.setTypeface(Typeface.DEFAULT);
+        }
+        textView.setText(templateInfo.getContent());
+        textView.setTextSize(templateInfo.getText_size());
+        textView.setTextColor(Color.parseColor(templateInfo.getText_color()));
+        if (!TextUtils.isEmpty(templateInfo.getShader_color())) {
+            textView.setShadowLayer(20, 0, 0, Color.parseColor(templateInfo.getShader_color()));
+        }
+        textView.setGravity(Gravity.CENTER_VERTICAL);
+        textView.setMaxWidth(900);
+        return textView;
     }
 
 }

@@ -93,12 +93,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/change_text_font_default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="默认字体" />
+
         <Button
             android:id="@+id/change_text_font_1"
             android:layout_width="match_parent"
@@ -113,4 +115,10 @@
             android:layout_weight="1"
             android:text="字体2" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/confirm_update_bubble"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="确认修改气泡" />
 </LinearLayout>
