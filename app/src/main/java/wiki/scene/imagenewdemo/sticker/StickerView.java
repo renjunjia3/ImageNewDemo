@@ -20,6 +20,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
@@ -120,6 +121,7 @@ public class StickerView extends FrameLayout {
 
     public StickerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         TypedArray a = null;
         try {
@@ -226,7 +228,6 @@ public class StickerView extends FrameLayout {
 
             if (showBorder) {
                 //必须关闭硬件加速不然虚线画不出来
-                setLayerType(LAYER_TYPE_SOFTWARE, null);
                 canvas.drawLine(x1, y1, x2, y2, borderPaint);
                 canvas.drawLine(x1, y1, x3, y3, borderPaint);
                 canvas.drawLine(x2, y2, x4, y4, borderPaint);
@@ -297,6 +298,8 @@ public class StickerView extends FrameLayout {
         if (locked) {
             return super.onTouchEvent(event);
         }
+
+        getParent().requestDisallowInterceptTouchEvent(true);
 
         int action = MotionEventCompat.getActionMasked(event);
 

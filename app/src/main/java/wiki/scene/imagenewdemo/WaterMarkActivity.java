@@ -5,10 +5,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -23,7 +25,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +45,8 @@ import wiki.scene.imagenewdemo.sticker.StickerIconEvent;
 import wiki.scene.imagenewdemo.sticker.StickerView;
 import wiki.scene.imagenewdemo.sticker.TextSticker;
 import wiki.scene.imagenewdemo.sticker.ZoomIconEvent;
-import wiki.scene.imagenewdemo.util.FileUtil;
+import wiki.scene.imagenewdemo.util.MethodUtil;
+import wiki.scene.imagenewdemo.util.ToastUtil;
 
 public class WaterMarkActivity extends AppCompatActivity {
     private static final String TAG = WaterMarkActivity.class.getSimpleName();
@@ -49,6 +54,7 @@ public class WaterMarkActivity extends AppCompatActivity {
 
     private StickerView stickerView;
     private RelativeLayout container;
+    private LinearLayout base_container;
     private ImageView bg_waterMark;
 
     private ProgressDialog progressDialog;
@@ -60,6 +66,7 @@ public class WaterMarkActivity extends AppCompatActivity {
 
         stickerView = findViewById(R.id.sticker_view);
         container = findViewById(R.id.container);
+        base_container = findViewById(R.id.base_container);
         bg_waterMark = findViewById(R.id.bg_waterMark);
 
         File file = new File(Environment.getExternalStorageDirectory() + File.separator + "WSManager" + File.separator + "wsManager_1528782022697.png");
@@ -71,6 +78,9 @@ public class WaterMarkActivity extends AppCompatActivity {
         initstickerViewBaseAttr();
         addStickerListener();
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("正在保存图片");
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED
@@ -80,8 +90,6 @@ public class WaterMarkActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERM_RQST_CODE);
         }
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("正在保存图片");
     }
 
 
@@ -302,16 +310,38 @@ public class WaterMarkActivity extends AppCompatActivity {
 
     //保存
     public void onClickSaveImageBitmap(View view) {
+
+        stickerView.setLocked(true);
+        final String fileName = "wsManager_" + System.currentTimeMillis() + ".png";
+        Log.e("保存的图片地址", fileName);
         progressDialog.show();
-        File file = FileUtil.getNewFile(WaterMarkActivity.this, "Sticker");
-        if (file != null) {
-            stickerView.save(file);
-            Toast.makeText(WaterMarkActivity.this, "saved in " + file.getAbsolutePath(),
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(WaterMarkActivity.this, "the file is null", Toast.LENGTH_SHORT).show();
-        }
-        progressDialog.cancel();
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                return MethodUtil.ScreenShotAndSaveImage(base_container, fileName);
+            }
+
+            @Override
+            protected void onPostExecute(Boolean aBool) {
+                super.onPostExecute(aBool);
+                progressDialog.cancel();
+                if (aBool) {
+                    ToastUtil.show(WaterMarkActivity.this, "保存成功");
+                } else {
+                    ToastUtil.show(WaterMarkActivity.this, "保存出错");
+                }
+                stickerView.setLocked(false);
+            }
+        }.execute(null, null, null);
+
+
+//        File file = FileUtil.getNewFile(WaterMarkActivity.this, "Sticker");
+//        if (file != null) {
+//            Toast.makeText(WaterMarkActivity.this, "saved in " + file.getAbsolutePath(),
+//                    Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(WaterMarkActivity.this, "the file is null", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     private Bitmap fullBitmap;
@@ -353,6 +383,19 @@ public class WaterMarkActivity extends AppCompatActivity {
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         view.buildDrawingCache();
         return view.getDrawingCache();
+    }
+
+    public static Bitmap shotScrollView(ScrollView scrollView) {
+        int h = 0;
+        Bitmap bitmap;
+        for (int i = 0; i < scrollView.getChildCount(); i++) {
+            h += scrollView.getChildAt(i).getHeight();
+            scrollView.getChildAt(i).setBackgroundColor(Color.parseColor("#ffffff"));
+        }
+        bitmap = Bitmap.createBitmap(scrollView.getWidth(), h, Bitmap.Config.RGB_565);
+        final Canvas canvas = new Canvas(bitmap);
+        scrollView.draw(canvas);
+        return bitmap;
     }
 
     private int sp2px(Context context, float spValue) {
