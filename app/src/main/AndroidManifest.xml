@@ -24,6 +24,7 @@
             android:name=".WaterMarkActivity"
             android:hardwareAccelerated="false" />
         <activity android:name=".SxPintuActivity" />
+        <activity android:name=".WaterMarkEditActivity"></activity>
     </application>
 
 </manifest>

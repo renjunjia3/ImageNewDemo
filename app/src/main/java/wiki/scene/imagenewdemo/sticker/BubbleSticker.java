@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
+import wiki.scene.imagenewdemo.entity.BubbleLocalTemplateInfo;
+
 /**
  * @author wupanjie
  */
@@ -13,9 +15,11 @@ public class BubbleSticker extends Sticker {
 
     private Drawable drawable;
     private Rect realBounds;
+    private BubbleLocalTemplateInfo bubbleLocalTemplateInfo;
 
-    public BubbleSticker(Drawable drawable) {
+    public BubbleSticker(Drawable drawable, BubbleLocalTemplateInfo bubbleLocalTemplateInfo) {
         this.drawable = drawable;
+        this.bubbleLocalTemplateInfo = bubbleLocalTemplateInfo;
         realBounds = new Rect(0, 0, getWidth(), getHeight());
     }
 
@@ -23,6 +27,10 @@ public class BubbleSticker extends Sticker {
     @Override
     public Drawable getDrawable() {
         return drawable;
+    }
+
+    public BubbleLocalTemplateInfo getBubbleLocalTemplateInfo() {
+        return bubbleLocalTemplateInfo;
     }
 
     @Override

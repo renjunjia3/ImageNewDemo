@@ -2,10 +2,9 @@ package wiki.scene.imagenewdemo;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -27,7 +26,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +34,7 @@ import com.bumptech.glide.Glide;
 import java.io.File;
 import java.util.Arrays;
 
+import wiki.scene.imagenewdemo.entity.BubbleLocalTemplateInfo;
 import wiki.scene.imagenewdemo.sticker.BitmapStickerIcon;
 import wiki.scene.imagenewdemo.sticker.BubbleSticker;
 import wiki.scene.imagenewdemo.sticker.DeleteIconEvent;
@@ -46,6 +45,7 @@ import wiki.scene.imagenewdemo.sticker.StickerView;
 import wiki.scene.imagenewdemo.sticker.TextSticker;
 import wiki.scene.imagenewdemo.sticker.ZoomIconEvent;
 import wiki.scene.imagenewdemo.util.MethodUtil;
+import wiki.scene.imagenewdemo.util.NinePatchUtil;
 import wiki.scene.imagenewdemo.util.ToastUtil;
 
 public class WaterMarkActivity extends AppCompatActivity {
@@ -124,7 +124,14 @@ public class WaterMarkActivity extends AppCompatActivity {
             @Override
             public void onActionUp(StickerView stickerView, MotionEvent event) {
                 //监听器 这儿只需要跳转到编辑界面就行
-                Toast.makeText(stickerView.getContext(), "Hello World!", Toast.LENGTH_SHORT).show();
+                if (stickerView.getCurrentSticker() instanceof BubbleSticker) {
+                    BubbleSticker bubbleSticker = (BubbleSticker) stickerView.getCurrentSticker();
+                    BubbleLocalTemplateInfo info = bubbleSticker.getBubbleLocalTemplateInfo();
+                    Intent intent = new Intent(WaterMarkActivity.this, WaterMarkEditActivity.class);
+                    intent.putExtra("data", info);
+                    WaterMarkActivity.this.startActivity(intent);
+                }
+
             }
         });
         stickerView.setIcons(Arrays.asList(deleteIcon, zoomIcon, editIcon));
@@ -348,12 +355,27 @@ public class WaterMarkActivity extends AppCompatActivity {
 
     //添加气泡
     public void onClickAddQp(View view) {
+        final BubbleLocalTemplateInfo templateInfo = new BubbleLocalTemplateInfo();
+        templateInfo.setId(102);
+        templateInfo.setBuddle_name("标签1");
+        templateInfo.setBuddle_template_path(Environment.getExternalStorageDirectory() + File.separator + "bg_message1.9.png");
+        templateInfo.setContent("你好吗你好吗你好吗你好吗？");
+        templateInfo.setText_color("#FFFFFF");
+        templateInfo.setText_size(16);
+
         TextView textView = new TextView(this);
-        textView.setBackgroundResource(R.drawable.bg_message1);
-        textView.setText("减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体");
-        textView.setTextColor(Color.WHITE);
+
+        if (templateInfo.getBuddle_template_path() != null && NinePatchUtil.getLocalNinePatch(WaterMarkActivity.this, templateInfo.getBuddle_template_path()) != null) {
+            textView.setBackground(NinePatchUtil.getLocalNinePatch(WaterMarkActivity.this, templateInfo.getBuddle_template_path()));
+        }
+
+        textView.setText(templateInfo.getContent());
+        textView.setTextColor(Color.parseColor(templateInfo.getText_color()));
+        if (templateInfo.getShader_color() != null && !templateInfo.getShader_color().isEmpty()) {
+            textView.setShadowLayer(20, 0, 0, Color.parseColor(templateInfo.getShader_color()));
+        }
         textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setTextSize(16);
+        textView.setTextSize(templateInfo.getText_size());
         textView.setMaxWidth(900);
         container.addView(textView);
         container.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -367,7 +389,7 @@ public class WaterMarkActivity extends AppCompatActivity {
                         Bitmap bitmap = convertViewToBitmap(container);
                         fullBitmap = Bitmap.createBitmap(bitmap);
                         container.setDrawingCacheEnabled(false);
-                        BubbleSticker drawableSticker = new BubbleSticker(new BitmapDrawable(getResources(), fullBitmap));
+                        BubbleSticker drawableSticker = new BubbleSticker(new BitmapDrawable(getResources(), fullBitmap), templateInfo);
                         stickerView.addSticker(drawableSticker);
                         fullBitmap = null;
                         container.removeAllViews();
@@ -385,21 +407,4 @@ public class WaterMarkActivity extends AppCompatActivity {
         return view.getDrawingCache();
     }
 
-    public static Bitmap shotScrollView(ScrollView scrollView) {
-        int h = 0;
-        Bitmap bitmap;
-        for (int i = 0; i < scrollView.getChildCount(); i++) {
-            h += scrollView.getChildAt(i).getHeight();
-            scrollView.getChildAt(i).setBackgroundColor(Color.parseColor("#ffffff"));
-        }
-        bitmap = Bitmap.createBitmap(scrollView.getWidth(), h, Bitmap.Config.RGB_565);
-        final Canvas canvas = new Canvas(bitmap);
-        scrollView.draw(canvas);
-        return bitmap;
-    }
-
-    private int sp2px(Context context, float spValue) {
-        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
-    }
 }
