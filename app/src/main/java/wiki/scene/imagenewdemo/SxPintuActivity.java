@@ -9,12 +9,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 
@@ -26,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import wiki.scene.imagenewdemo.util.MethodUtil;
 import wiki.scene.imagenewdemo.util.ToastUtil;
+import wiki.scene.imagenewdemo.weight.MskImageView;
 
 public class SxPintuActivity extends AppCompatActivity {
     @BindView(R.id.layout_container)
@@ -63,18 +61,21 @@ public class SxPintuActivity extends AppCompatActivity {
 
         int size = imageUrls.size();
         for (int i = 0; i < size; i++) {
-
-            RelativeLayout relativeLayout = new RelativeLayout(this);
-            ImageView imageView = new ImageView(this);
-            Glide.with(SxPintuActivity.this).asBitmap().load(imageUrls.get(i)).into(imageView);
-            LinearLayout.LayoutParams imageLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            relativeLayout.setLayoutParams(imageLayoutParams);
-            relativeLayout.addView(imageView);
-            container.addView(relativeLayout);
+            final MskImageView mskImageView = new MskImageView(this);
+            Glide.with(this).asBitmap().load(imageUrls.get(i)).into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    mskImageView.setImageBitmap(resource);
+                }
+            });
+            if (i != size - 1) {
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                lp.bottomMargin = currentInnerSpace;
+                mskImageView.setLayoutParams(lp);
+            }
+            container.addView(mskImageView);
         }
-        changeInnerSpace();
         changeOutSpace();
-
     }
 
 
@@ -145,7 +146,7 @@ public class SxPintuActivity extends AppCompatActivity {
 
 
     private void changeInnerSpace() {
-        for (int i = 0; i < imageUrls.size(); i++) {
+        for (int i = 0; i < container.getChildCount(); i++) {
             if (i != imageUrls.size() - 1) {
                 LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) container.getChildAt(i).getLayoutParams();
                 lp.bottomMargin = currentInnerSpace;

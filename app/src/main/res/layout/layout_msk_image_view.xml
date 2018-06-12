@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/imageview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true" />
+
+    <ImageView
+        android:id="@+id/mask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageview"
+        android:layout_alignLeft="@+id/imageview"
+        android:layout_alignRight="@+id/imageview"
+        android:layout_alignTop="@+id/imageview"
+        android:visibility="invisible" />
+</RelativeLayout>
