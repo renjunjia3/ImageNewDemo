@@ -432,7 +432,7 @@ public class StickerView extends FrameLayout {
                 break;
             case ActionMode.ZOOM_WITH_TWO_FINGER:
                 if (handlingSticker != null) {
-                    if(!(getCurrentSticker() instanceof BubbleSticker)){
+                    if (!(getCurrentSticker() instanceof BubbleSticker)) {
                         float newDistance = calculateDistance(event);
                         float newRotation = calculateRotation(event);
                         moveMatrix.set(downMatrix);
@@ -758,9 +758,10 @@ public class StickerView extends FrameLayout {
         widthScaleFactor = (float) getWidth() / sticker.getDrawable().getIntrinsicWidth();
         heightScaleFactor = (float) getHeight() / sticker.getDrawable().getIntrinsicHeight();
         scaleFactor = widthScaleFactor > heightScaleFactor ? heightScaleFactor : widthScaleFactor;
-
-        sticker.getMatrix()
-                .postScale(scaleFactor / 2, scaleFactor / 2, getWidth() / 2, getHeight() / 2);
+        //气泡图不缩放
+        if (!(sticker instanceof BubbleSticker)) {
+            sticker.getMatrix().postScale(scaleFactor / 2, scaleFactor / 2, getWidth() / 2, getHeight() / 2);
+        }
 
         handlingSticker = sticker;
         stickers.add(sticker);

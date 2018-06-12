@@ -349,11 +349,11 @@ public class WaterMarkActivity extends AppCompatActivity {
     //添加气泡
     public void onClickAddQp(View view) {
         TextView textView = new TextView(this);
-        textView.setBackgroundResource(R.drawable.bg_message);
-        textView.setText("你好");
+        textView.setBackgroundResource(R.drawable.bg_message1);
+        textView.setText("减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体减小字体");
         textView.setTextColor(Color.WHITE);
         textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setTextSize(sp2px(this, 16));
+        textView.setTextSize(16);
         textView.setMaxWidth(900);
         container.addView(textView);
         container.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
