@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         findViewById(R.id.waterMark).setOnClickListener(this);
         findViewById(R.id.pintu_sx).setOnClickListener(this);
+        findViewById(R.id.gotten_image).setOnClickListener(this);
     }
 
     @Override
@@ -25,6 +26,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.pintu_sx:
                 //顺序拼图
                 start(LongImageActivity.class);
+                break;
+            case R.id.gotten_image:
+                //顺序拼图
+                start(GottenImageActivity.class);
                 break;
         }
     }

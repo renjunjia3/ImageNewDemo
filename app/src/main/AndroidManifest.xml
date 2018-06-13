@@ -25,7 +25,8 @@
             android:name=".WaterMarkActivity"
             android:hardwareAccelerated="false" />
         <activity android:name=".LongImageActivity" />
-        <activity android:name=".WaterMarkEditActivity"></activity>
+        <activity android:name=".WaterMarkEditActivity" />
+        <activity android:name=".GottenImageActivity"></activity>
     </application>
 
 </manifest>

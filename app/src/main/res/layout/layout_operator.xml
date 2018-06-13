@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_bg_operator"
+    android:orientation="horizontal"
+    android:visibility="invisible">
+
+    <ImageView
+        android:id="@+id/operation_init"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/icon_operation_init" />
+
+    <ImageView
+        android:id="@+id/operation_change"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/icon_operation_change" />
+
+    <ImageView
+        android:id="@+id/operation_mirror"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/icon_operation_mirror" />
+
+    <ImageView
+        android:id="@+id/operation_filter"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        android:src="@drawable/icon_operation_filter" />
+
+</LinearLayout>

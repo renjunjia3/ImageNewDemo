@@ -16,5 +16,11 @@
         android:id="@+id/pintu_sx"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="顺序拼图" />
+        android:text="制作长图" />
+
+    <Button
+        android:id="@+id/gotten_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="拼图" />
 </LinearLayout>
