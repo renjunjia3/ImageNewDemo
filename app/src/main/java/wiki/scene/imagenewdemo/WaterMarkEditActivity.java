@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -27,6 +28,8 @@ public class WaterMarkEditActivity extends AppCompatActivity {
     TextView tvContent;
     @BindView(R.id.tv_new_content)
     EditText tvNewContent;
+    @BindView(R.id.bg_layout)
+    LinearLayout bgLayout;
 
     private int MAX_SIZE = 30;
     private int MIN_SIZE = 6;
@@ -88,7 +91,7 @@ public class WaterMarkEditActivity extends AppCompatActivity {
     private void reDrawTextView() {
         if (!TextUtils.isEmpty(info.getBuddle_template_path())) {
             if (NinePatchUtil.getLocalNinePatch(WaterMarkEditActivity.this, info.getBuddle_template_path()) != null) {
-                tvContent.setBackground(NinePatchUtil.getLocalNinePatch(WaterMarkEditActivity.this, info.getBuddle_template_path()));
+                bgLayout.setBackground(NinePatchUtil.getLocalNinePatch(WaterMarkEditActivity.this, info.getBuddle_template_path()));
             }
         }
         if (!TextUtils.isEmpty(info.getText_font())) {

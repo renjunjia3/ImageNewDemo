@@ -21,7 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -92,7 +92,7 @@ public class WaterMarkActivity extends AppCompatActivity {
         File file = new File(Environment.getExternalStorageDirectory() + File.separator + "WSManager" + File.separator + "wsManager_1528782022697.png");
 
         Glide.with(this)
-                .load(file)
+                .load("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3588772980,2454248748&fm=27&gp=0.jpg")
                 .into(bg_waterMark);
 
         initstickerViewBaseAttr();
@@ -358,7 +358,7 @@ public class WaterMarkActivity extends AppCompatActivity {
         final BubbleLocalTemplateInfo templateInfo = new BubbleLocalTemplateInfo();
         templateInfo.setId(102);
         templateInfo.setBuddle_name("标签1");
-        templateInfo.setBuddle_template_path(Environment.getExternalStorageDirectory() + File.separator + "bg_message1.9.png");
+        templateInfo.setBuddle_template_path(Environment.getExternalStorageDirectory() + File.separator + "bubble_3.9.png");
         templateInfo.setContent("你好吗你好吗你好吗你好吗？");
         templateInfo.setText_color("#FFFFFF");
         templateInfo.setText_size(16);
@@ -421,32 +421,37 @@ public class WaterMarkActivity extends AppCompatActivity {
         }
     }
 
-    private TextView textView;
+    private TextView bubbleContentView;
+    private LinearLayout bubbleBgLayout;
+    private View bubbleView;
 
-    private TextView createBubbleTextView(BubbleLocalTemplateInfo templateInfo) {
-        if (textView == null) {
-            textView = new TextView(this);
+    private View createBubbleTextView(BubbleLocalTemplateInfo templateInfo) {
+
+        if (bubbleView == null) {
+            bubbleView = LayoutInflater.from(this).inflate(R.layout.layout_bubble, null);
+            bubbleBgLayout = bubbleView.findViewById(R.id.bubble_bg_layout);
+            bubbleContentView = bubbleView.findViewById(R.id.bubble_content_view);
         }
+
         if (!TextUtils.isEmpty(templateInfo.getBuddle_template_path())) {
             if (NinePatchUtil.getLocalNinePatch(WaterMarkActivity.this, templateInfo.getBuddle_template_path()) != null) {
-                textView.setBackground(NinePatchUtil.getLocalNinePatch(WaterMarkActivity.this, templateInfo.getBuddle_template_path()));
+                bubbleBgLayout.setBackground(NinePatchUtil.getLocalNinePatch(WaterMarkActivity.this, templateInfo.getBuddle_template_path()));
             }
         }
         if (!TextUtils.isEmpty(templateInfo.getText_font())) {
             Typeface typeface = Typeface.createFromFile(templateInfo.getText_font());
-            textView.setTypeface(typeface);
+            bubbleContentView.setTypeface(typeface);
         } else {
-            textView.setTypeface(Typeface.DEFAULT);
+            bubbleContentView.setTypeface(Typeface.DEFAULT);
         }
-        textView.setText(templateInfo.getContent());
-        textView.setTextSize(templateInfo.getText_size());
-        textView.setTextColor(Color.parseColor(templateInfo.getText_color()));
+        bubbleContentView.setText(templateInfo.getContent());
+        bubbleContentView.setTextSize(templateInfo.getText_size());
+        bubbleContentView.setTextColor(Color.parseColor(templateInfo.getText_color()));
         if (!TextUtils.isEmpty(templateInfo.getShader_color())) {
-            textView.setShadowLayer(20, 0, 0, Color.parseColor(templateInfo.getShader_color()));
+            bubbleContentView.setShadowLayer(20, 0, 0, Color.parseColor(templateInfo.getShader_color()));
         }
-        textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setMaxWidth(900);
-        return textView;
+        bubbleContentView.setMaxWidth(900);
+        return bubbleView;
     }
 
     private void showToast(String message) {
