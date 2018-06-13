@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,8 @@ public class SxPintuActivity extends AppCompatActivity {
     //外间距
     private int currentOutSpace = 10;
 
+    private SaveBitmapTask saveImageTask;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +51,15 @@ public class SxPintuActivity extends AppCompatActivity {
         progressDialog.setMessage("正在保存图片");
 
         initData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (saveImageTask != null && !saveImageTask.isCancelled()) {
+            saveImageTask.cancel(true);
+            saveImageTask = null;
+        }
+        super.onDestroy();
     }
 
     private void initData() {
@@ -84,23 +96,14 @@ public class SxPintuActivity extends AppCompatActivity {
         final String fileName = "wsManager_" + System.currentTimeMillis() + ".png";
         Log.e("保存的图片地址", fileName);
         progressDialog.show();
-        new AsyncTask<Void, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(Void... params) {
-                return MethodUtil.ScreenShotAndSaveImage(container, fileName);
-            }
 
-            @Override
-            protected void onPostExecute(Boolean aBool) {
-                super.onPostExecute(aBool);
-                progressDialog.cancel();
-                if (aBool) {
-                    ToastUtil.show(SxPintuActivity.this, "保存成功");
-                } else {
-                    ToastUtil.show(SxPintuActivity.this, "保存出错");
-                }
-            }
-        }.execute(null, null, null);
+        if (saveImageTask != null) {
+            //cancel方法依然会执行doInBackground 然后执行onCancel
+            saveImageTask.cancel(true);
+            saveImageTask = null;
+        }
+        saveImageTask = new SaveBitmapTask(SxPintuActivity.this);
+        saveImageTask.execute(container, fileName);
     }
 
     @OnClick(R.id.update_bg)
@@ -144,6 +147,10 @@ public class SxPintuActivity extends AppCompatActivity {
         changeInnerSpace();
     }
 
+    private void showToast(String message) {
+        ToastUtil.show(SxPintuActivity.this, message);
+    }
+
 
     private void changeInnerSpace() {
         for (int i = 0; i < container.getChildCount(); i++) {
@@ -161,6 +168,35 @@ public class SxPintuActivity extends AppCompatActivity {
 
     private void changeOutSpace() {
         container.setPadding(currentOutSpace, currentOutSpace, currentOutSpace, currentOutSpace);
+    }
+
+
+    static class SaveBitmapTask extends AsyncTask<Object, Void, Boolean> {
+        private WeakReference<SxPintuActivity> weakAty;
+
+        private SaveBitmapTask(SxPintuActivity activity) {
+            weakAty = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected Boolean doInBackground(Object... params) {
+            //AsyncTask特性不管调没调用都会把方法执行完
+            return MethodUtil.ScreenShotAndSaveImage((LinearLayout) params[0], (String) params[1]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (weakAty.get() != null) {
+                weakAty.get().progressDialog.cancel();
+                if (result) {
+                    weakAty.get().showToast("保存成功");
+                } else {
+                    weakAty.get().showToast("保存失败");
+                }
+            }
+        }
+
     }
 
 }

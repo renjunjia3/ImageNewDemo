@@ -67,13 +67,14 @@ public class WaterMarkActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-    private AsyncTask saveBitmapTask;
+    private SaveBitmapTask saveBitmapTask;
 
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
-        if (saveBitmapTask != null && !saveBitmapTask.isCancelled()) {
+        if (saveBitmapTask != null && saveBitmapTask.getStatus() == AsyncTask.Status.RUNNING) {
             saveBitmapTask.cancel(true);
+            saveBitmapTask = null;
         }
         super.onDestroy();
     }
@@ -342,12 +343,12 @@ public class WaterMarkActivity extends AppCompatActivity {
         progressDialog.show();
 
         if (saveBitmapTask != null) {
+            //cancel方法依然会执行doInBackground 然后执行onCancel
             saveBitmapTask.cancel(true);
+            saveBitmapTask = null;
         }
         saveBitmapTask = new SaveBitmapTask(WaterMarkActivity.this);
-
         saveBitmapTask.execute(base_container, fileName);
-
     }
 
     private Bitmap fullBitmap;
@@ -456,12 +457,13 @@ public class WaterMarkActivity extends AppCompatActivity {
     static class SaveBitmapTask extends AsyncTask<Object, Void, Boolean> {
         private WeakReference<WaterMarkActivity> weakAty;
 
-        public SaveBitmapTask(WaterMarkActivity activity) {
+        private SaveBitmapTask(WaterMarkActivity activity) {
             weakAty = new WeakReference<>(activity);
         }
 
         @Override
         protected Boolean doInBackground(Object... params) {
+            //AsyncTask特性不管调没调用都会把方法执行完
             return MethodUtil.ScreenShotAndSaveImage((LinearLayout) params[0], (String) params[1]);
         }
 
@@ -475,15 +477,6 @@ public class WaterMarkActivity extends AppCompatActivity {
                 } else {
                     weakAty.get().showToast("保存失败");
                 }
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            if (weakAty.get() != null) {
-                weakAty.get().progressDialog.cancel();
-                weakAty.get().showToast("取消保存");
             }
         }
     }
