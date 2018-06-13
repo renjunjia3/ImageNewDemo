@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.pintu_sx:
                 //顺序拼图
-                start(SxPintuActivity.class);
+                start(LongImageActivity.class);
                 break;
         }
     }

@@ -26,7 +26,10 @@ import wiki.scene.imagenewdemo.util.MethodUtil;
 import wiki.scene.imagenewdemo.util.ToastUtil;
 import wiki.scene.imagenewdemo.weight.MskImageView;
 
-public class SxPintuActivity extends AppCompatActivity {
+/**
+ * 制作长图
+ */
+public class LongImageActivity extends AppCompatActivity {
     @BindView(R.id.layout_container)
     LinearLayout container;
 
@@ -43,7 +46,7 @@ public class SxPintuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sx_pintu);
+        setContentView(R.layout.activity_long_image);
         ButterKnife.bind(this);
 
         progressDialog = new ProgressDialog(this);
@@ -102,7 +105,7 @@ public class SxPintuActivity extends AppCompatActivity {
             saveImageTask.cancel(true);
             saveImageTask = null;
         }
-        saveImageTask = new SaveBitmapTask(SxPintuActivity.this);
+        saveImageTask = new SaveBitmapTask(LongImageActivity.this);
         saveImageTask.execute(container, fileName);
     }
 
@@ -148,7 +151,7 @@ public class SxPintuActivity extends AppCompatActivity {
     }
 
     private void showToast(String message) {
-        ToastUtil.show(SxPintuActivity.this, message);
+        ToastUtil.show(LongImageActivity.this, message);
     }
 
 
@@ -172,9 +175,9 @@ public class SxPintuActivity extends AppCompatActivity {
 
 
     static class SaveBitmapTask extends AsyncTask<Object, Void, Boolean> {
-        private WeakReference<SxPintuActivity> weakAty;
+        private WeakReference<LongImageActivity> weakAty;
 
-        private SaveBitmapTask(SxPintuActivity activity) {
+        private SaveBitmapTask(LongImageActivity activity) {
             weakAty = new WeakReference<>(activity);
         }
 
