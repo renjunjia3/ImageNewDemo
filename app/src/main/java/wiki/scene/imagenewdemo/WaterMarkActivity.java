@@ -38,6 +38,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
 import wiki.scene.imagenewdemo.entity.BubbleLocalTemplateInfo;
@@ -66,9 +67,14 @@ public class WaterMarkActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
+    private AsyncTask saveBitmapTask;
+
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        if (saveBitmapTask != null && !saveBitmapTask.isCancelled()) {
+            saveBitmapTask.cancel(true);
+        }
         super.onDestroy();
     }
 
@@ -104,7 +110,6 @@ public class WaterMarkActivity extends AppCompatActivity {
         }
 
     }
-
 
     //初始化角落的icon
     private void initCornerIcon() {
@@ -335,33 +340,14 @@ public class WaterMarkActivity extends AppCompatActivity {
         final String fileName = "wsManager_" + System.currentTimeMillis() + ".png";
         Log.e("保存的图片地址", fileName);
         progressDialog.show();
-        new AsyncTask<Void, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(Void... params) {
-                return MethodUtil.ScreenShotAndSaveImage(base_container, fileName);
-            }
 
-            @Override
-            protected void onPostExecute(Boolean aBool) {
-                super.onPostExecute(aBool);
-                progressDialog.cancel();
-                if (aBool) {
-                    ToastUtil.show(WaterMarkActivity.this, "保存成功");
-                } else {
-                    ToastUtil.show(WaterMarkActivity.this, "保存出错");
-                }
-                stickerView.setLocked(false);
-            }
-        }.execute(null, null, null);
+        if (saveBitmapTask != null) {
+            saveBitmapTask.cancel(true);
+        }
+        saveBitmapTask = new SaveBitmapTask(WaterMarkActivity.this);
 
+        saveBitmapTask.execute(base_container, fileName);
 
-//        File file = FileUtil.getNewFile(WaterMarkActivity.this, "Sticker");
-//        if (file != null) {
-//            Toast.makeText(WaterMarkActivity.this, "saved in " + file.getAbsolutePath(),
-//                    Toast.LENGTH_SHORT).show();
-//        } else {
-//            Toast.makeText(WaterMarkActivity.this, "the file is null", Toast.LENGTH_SHORT).show();
-//        }
     }
 
     private Bitmap fullBitmap;
@@ -460,6 +446,46 @@ public class WaterMarkActivity extends AppCompatActivity {
         textView.setGravity(Gravity.CENTER_VERTICAL);
         textView.setMaxWidth(900);
         return textView;
+    }
+
+    private void showToast(String message) {
+        ToastUtil.show(this, message);
+    }
+
+
+    static class SaveBitmapTask extends AsyncTask<Object, Void, Boolean> {
+        private WeakReference<WaterMarkActivity> weakAty;
+
+        public SaveBitmapTask(WaterMarkActivity activity) {
+            weakAty = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected Boolean doInBackground(Object... params) {
+            return MethodUtil.ScreenShotAndSaveImage((LinearLayout) params[0], (String) params[1]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (weakAty.get() != null) {
+                weakAty.get().progressDialog.cancel();
+                if (result) {
+                    weakAty.get().showToast("保存成功");
+                } else {
+                    weakAty.get().showToast("保存失败");
+                }
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            if (weakAty.get() != null) {
+                weakAty.get().progressDialog.cancel();
+                weakAty.get().showToast("取消保存");
+            }
+        }
     }
 
 }
