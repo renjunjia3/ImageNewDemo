@@ -227,7 +227,7 @@ public class GottenImageActivity extends AppCompatActivity {
             @Override
             protected Boolean doInBackground(Void... params) {
                 return MethodUtil.ScreenShotAndSaveImage(v, fileName);
-            }
+        }
 
             @Override
             protected void onPostExecute(Boolean aBool) {
