@@ -106,59 +106,50 @@ public class GottenImageActivity extends AppCompatActivity {
 
     private void initData() {
         MediaBean mediaBean1 = new MediaBean();
-        mediaBean1.setId(22615);
-        mediaBean1.setTitle("20180606090000@e3906a9386184d9842ae8092207ea733@type8@0");
-        mediaBean1.setOriginalPath("/storage/emulated/0/小精灵美化/小精灵美化QQ照片墙/20180606090000@e3906a9386184d9842ae8092207ea733@type8@0.jpg");
-        mediaBean1.setCreateDate(1528250372);
-        mediaBean1.setModifiedDate(1528077244);
+        mediaBean1.setBucketDisplayName("小精灵美化壁纸");
+        mediaBean1.setBucketId("1287629322");
+        mediaBean1.setCreateDate(1528886352);
+        mediaBean1.setHeight(1920);
+        mediaBean1.setId(60);
+        mediaBean1.setModifiedDate(1528886352);
         mediaBean1.setMimeType("image");
         mediaBean1.setWidth(560);
-        mediaBean1.setHeight(560);
-        mediaBean1.setLatitude(0.0);
-        mediaBean1.setLongitude(0.0);
-        mediaBean1.setOrientation(0);
-        mediaBean1.setLength(121014);
-        mediaBean1.setBucketId("1073859558");
-        mediaBean1.setBucketDisplayName("小精灵美化QQ照片墙");
-        mediaBean1.setThumbnailBigPath("/storage/emulated/0/小精灵美化/小精灵美化QQ照片墙/20180606090000@e3906a9386184d9842ae8092207ea733@type8@0.jpg");
-        mediaBean1.setThumbnailSmallPath("/storage/emulated/0/小精灵美化/小精灵美化QQ照片墙/20180606090000@e3906a9386184d9842ae8092207ea733@type8@0.jpg");
+        mediaBean1.setLength(823024);
+        mediaBean1.setTitle("20180613180000@7ab4fefa60967a624c656300e8ebae26");
+        mediaBean1.setOriginalPath("/storage/emulated/0/小精灵美化/小精灵美化壁纸/20180613180000@7ab4fefa60967a624c656300e8ebae26.jpg");
+        mediaBean1.setThumbnailBigPath("/storage/emulated/0/小精灵美化/小精灵美化壁纸/20180613180000@7ab4fefa60967a624c656300e8ebae26.jpg");
+        mediaBean1.setThumbnailSmallPath("/storage/emulated/0/小精灵美化/小精灵美化壁纸/20180613180000@7ab4fefa60967a624c656300e8ebae26.jpg");
 
 
         MediaBean mediaBean2 = new MediaBean();
-        mediaBean2.setId(22616);
-        mediaBean2.setTitle("20180606090000@e3906a9386184d9842ae8092207ea733@type8@6");
-        mediaBean2.setOriginalPath("/storage/emulated/0/小精灵美化/小精灵美化QQ照片墙/20180606090000@e3906a9386184d9842ae8092207ea733@type8@6.jpg");
-        mediaBean2.setCreateDate(1528077244);
-        mediaBean2.setModifiedDate(1528077244);
+        mediaBean2.setBucketDisplayName("小精灵美化壁纸");
+        mediaBean2.setBucketId("1287629322");
+        mediaBean2.setCreateDate(1528886352);
+        mediaBean2.setHeight(1280);
+        mediaBean2.setId(60);
+        mediaBean2.setModifiedDate(1528886365);
         mediaBean2.setMimeType("image");
-        mediaBean2.setWidth(280);
-        mediaBean2.setHeight(280);
-        mediaBean2.setLatitude(0.0);
-        mediaBean2.setLongitude(0.0);
-        mediaBean2.setOrientation(0);
-        mediaBean2.setLength(53215);
-        mediaBean2.setBucketId("1073859558");
-        mediaBean2.setBucketDisplayName("小精灵美化QQ照片墙");
-        mediaBean2.setThumbnailBigPath("/storage/emulated/0/小精灵美化/小精灵美化QQ照片墙/20180606090000@e3906a9386184d9842ae8092207ea733@type8@6.jpg");
-        mediaBean2.setThumbnailSmallPath("/storage/emulated/0/小精灵美化/小精灵美化QQ照片墙/20180606090000@e3906a9386184d9842ae8092207ea733@type8@6.jpg");
+        mediaBean2.setWidth(720);
+        mediaBean2.setLength(39018);
+        mediaBean2.setTitle("20180613180000@fcd7796316d73b9affd4f6a23fe18d1b");
+        mediaBean2.setOriginalPath("/storage/emulated/0/小精灵美化/小精灵美化壁纸/20180613180000@fcd7796316d73b9affd4f6a23fe18d1b.jpg");
+        mediaBean2.setThumbnailBigPath("/storage/emulated/0/小精灵美化/小精灵美化壁纸/20180613180000@fcd7796316d73b9affd4f6a23fe18d1b.jpg");
+        mediaBean2.setThumbnailSmallPath("/storage/emulated/0/小精灵美化/小精灵美化壁纸/20180613180000@fcd7796316d73b9affd4f6a23fe18d1b.jpg");
 
         MediaBean mediaBean3 = new MediaBean();
-        mediaBean3.setId(22616);
-        mediaBean3.setTitle("20180606090000@e3906a9386184d9842ae8092207ea733@type8@6");
-        mediaBean3.setOriginalPath("/storage/emulated/0/小精灵美化/小精灵美化QQ照片墙/20180606090000@e3906a9386184d9842ae8092207ea733@type8@6.jpg");
-        mediaBean3.setCreateDate(1528077244);
-        mediaBean3.setModifiedDate(1528077244);
+        mediaBean3.setBucketDisplayName("小精灵美化壁纸");
+        mediaBean3.setBucketId("1287629322");
+        mediaBean3.setCreateDate(1528886345);
+        mediaBean3.setHeight(960);
+        mediaBean3.setId(60);
+        mediaBean3.setModifiedDate(1528886352);
         mediaBean3.setMimeType("image");
-        mediaBean3.setWidth(280);
-        mediaBean3.setHeight(280);
-        mediaBean3.setLatitude(0.0);
-        mediaBean3.setLongitude(0.0);
-        mediaBean3.setOrientation(0);
-        mediaBean3.setLength(53215);
-        mediaBean3.setBucketId("1073859558");
-        mediaBean3.setBucketDisplayName("小精灵美化QQ照片墙");
-        mediaBean3.setThumbnailBigPath("/storage/emulated/0/小精灵美化/小精灵美化QQ照片墙/20180606090000@e3906a9386184d9842ae8092207ea733@type8@6.jpg");
-        mediaBean3.setThumbnailSmallPath("/storage/emulated/0/小精灵美化/小精灵美化QQ照片墙/20180606090000@e3906a9386184d9842ae8092207ea733@type8@6.jpg");
+        mediaBean3.setWidth(540);
+        mediaBean3.setLength(39018);
+        mediaBean3.setTitle("20180613180000@43c65774bdc2b53fce7dc566c538e678");
+        mediaBean3.setOriginalPath("/storage/emulated/0/小精灵美化/小精灵美化壁纸/20180613180000@43c65774bdc2b53fce7dc566c538e678.jpg");
+        mediaBean3.setThumbnailBigPath("/storage/emulated/0/小精灵美化/小精灵美化壁纸/20180613180000@43c65774bdc2b53fce7dc566c538e678.jpg");
+        mediaBean3.setThumbnailSmallPath("/storage/emulated/0/小精灵美化/小精灵美化壁纸/20180613180000@43c65774bdc2b53fce7dc566c538e678.jpg");
 
         mMediaBeanList.add(mediaBean1);
         mMediaBeanList.add(mediaBean2);
@@ -227,7 +218,7 @@ public class GottenImageActivity extends AppCompatActivity {
             @Override
             protected Boolean doInBackground(Void... params) {
                 return MethodUtil.ScreenShotAndSaveImage(v, fileName);
-        }
+            }
 
             @Override
             protected void onPostExecute(Boolean aBool) {

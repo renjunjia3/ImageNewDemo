@@ -358,7 +358,7 @@ public class WaterMarkActivity extends AppCompatActivity {
         final BubbleLocalTemplateInfo templateInfo = new BubbleLocalTemplateInfo();
         templateInfo.setId(102);
         templateInfo.setBuddle_name("标签1");
-        templateInfo.setBuddle_template_path(Environment.getExternalStorageDirectory() + File.separator + "bubble_3.9.png");
+        templateInfo.setBuddle_template_path(Environment.getExternalStorageDirectory() + File.separator + "bubble_right_1.9.png");
         templateInfo.setContent("你好吗你好吗你好吗你好吗？");
         templateInfo.setText_color("#FFFFFF");
         templateInfo.setText_size(16);
